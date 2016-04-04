@@ -16,6 +16,8 @@ def parse_data(filename, file1, file2):
     '''
  
     data_df = pd.read_csv(filename)
+    print ("------------Initial Summary Statistics-------------")
+
     print_summary_stats(data_df)
     gender = data_df[data_df['Gender'].notnull()]
     no_gender = data_df[data_df['Gender'].isnull()]
@@ -33,7 +35,7 @@ def print_summary_stats(dataframe):
     Takes pandas dataframe and prints mean, median, mode, sd for each
     column
     '''
-    print ("------------Summary Statistics-------------")
+    print (dataframe.count())
     print (dataframe.describe())
     print ("Median:", dataframe.median())
     print ("Mode:", dataframe.mode())
@@ -47,9 +49,9 @@ def conditional(dataframe, png_name, file, conditional):
     if not conditional:
         new_dataframe = dataframe.fillna(dataframe.mean())
         new_dataframe.to_csv(file, sep='\t')
+        print ("------------Unconditional Summary Statistics-------------")
         graph_histograms(new_dataframe, png_name)
     else:
-        print ("--------in conditional function-------------")
         graduated = dataframe[dataframe.Graduated == "Yes"]
         not_grad = dataframe[dataframe.Graduated == "No"]
         print ("number of entries for non-grads", not_grad.count())
@@ -57,6 +59,7 @@ def conditional(dataframe, png_name, file, conditional):
         graduated1 = graduated.fillna(graduated.mean())
         total = graduated1.append(not_grad, ignore_index=True)
         total.to_csv(file, sep='\t')
+        print ("------------Conditional Summary Statistics-------------")
         graph_histograms(total, png_name)
 
 def graph_histograms(dataframe, png_name):
@@ -73,5 +76,5 @@ def graph_histograms(dataframe, png_name):
 raw_filename = "mock_student_data.csv"
 file1 = "uncondit.csv"
 file2 = "condit.csv"
-file3 = "dropped.csv"
+
 parse_data(raw_filename, file1, file2)
