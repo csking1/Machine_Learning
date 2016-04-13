@@ -142,7 +142,7 @@ def graph_histograms(dataframe, png_name):
     "90days","realestate", "60to89days", "Dependents"]
     '''
 
-    dataframe.groupby('Dlqin2yrs').hist(bins=4)
+    dataframe.Dlqin2yrs.hist(bins=4)
     plt.title("Histogram of Delinquency Risk")
     plt.xlabel('Dlqin Risk within 2 Years')
     plt.ylabel("Frequency")
