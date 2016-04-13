@@ -74,6 +74,7 @@ def classify_data(dataframe, model, filename):
     p.rename(columns={p.columns[0]: "Dlqin2yrs"}, inplace=True)
     result = pd.concat([p, x], axis=1, join_axes=[p.index])
     filename = result.to_csv(filename, sep='\t')
+    print ("classifed histogram")
     graph_histograms(result, "classified.png")
     print (p.groupby("Dlqin2yrs").size())    
 
@@ -136,15 +137,23 @@ def graph_histograms(dataframe, png_name):
     Takes dataframe and png_name and creates histogram png for dataset
 
     ["Index", "Dlqin2yrs", "Unsecured", "Age", \
-     "30to59days", "Debtratio", "Monthlyincome",  "Opencredit", \
+     "30to59days", "Debtratio", "Mont
+     hlyincome",  "Opencredit", \
     "90days","realestate", "60to89days", "Dependents"]
     '''
 
-    dataframe.Dlqin2yrs.hist(bins=4)
+    dataframe.groupby('Dlqin2yrs').hist(bins=4)
     plt.title("Histogram of Delinquency Risk")
     plt.xlabel('Dlqin Risk within 2 Years')
     plt.ylabel("Frequency")
     plt.savefig(png_name)
+    #---------------------------------------------
+
+    dataframe.hist()
+    # plt.title("Histogram of Delinquency Risk")
+    # plt.xlabel('Dlqin Risk within 2 Years')
+    # plt.ylabel("Frequency")
+    plt.savefig("ugly.png")
 
 training = "cs-training.csv"
 testing = "cs-test.csv"
