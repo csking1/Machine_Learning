@@ -19,17 +19,16 @@ def read_data(filename):
     return df.drop(df.columns[[0]], axis = 1)
 
 def data_summary(dataframe):
-    print(np.round(dataframe.describe(percentiles = [.5]), 2).to_string(justify = "left"))
-    print("--------------Mean:" "\n",  dataframe.mean().to_string(float_format = "{:.2f}".format))
-    print("--------------Median:" "\n", dataframe.median().to_string(float_format = "{:.2f}".format))
-    print("--------------Standard Deviation:" "\n", dataframe.std().to_string(float_format = "{:.2f}".format))
-    print("--------------Mode:", '\n', dataframe.mode().to_string(index = False))
-    print("--------------Correlation Matrix:" "\n", dataframe.corr())
-    print("--------------Missing Values:" "\n",  dataframe.isnull().sum().to_string())
+    print("------------------------------Percentiles:-----------------------" "\n", np.round(dataframe.describe(percentiles = [.5]), 2).to_string(justify = "left"))
+    print("------------------------------Mean:------------------------------" "\n",  dataframe.mean().to_string(float_format = "{:.2f}".format))
+    print("------------------------------Median:----------------------------" "\n", dataframe.median().to_string(float_format = "{:.2f}".format))
+    print("------------------------------Standard Deviation:----------------" "\n", dataframe.std().to_string(float_format = "{:.2f}".format))
+    print("------------------------------Mode:------------------------------" '\n', dataframe.mode().to_string(index = False))
+    print("------------------------------Correlation Matrix:----------------" "\n", dataframe.corr())
+    print("------------------------------Missing Values:--------------------" "\n",  dataframe.isnull().sum().to_string())
 
 
 def graph_data(dataframe):
-    ## Graph classifier
     dataframe.groupby(dataframe.columns[0]).size().plot(kind = "bar", width = 1, rot = 0)
     plt.show()
     for name in dataframe.columns[1:]:
@@ -37,10 +36,11 @@ def graph_data(dataframe):
         plt.show()
 
 def impute_data(dataframe):
-	header = list(data.columns)
-	for name in header:
-		if dataframe[name].isnull().values.any():
-			dataframe[name] = data[name].fillna(dataframe[name].mean())
+
+	header = list(dataframe.columns)
+	for each in header:
+		if dataframe[each].isnull().values.any():
+			dataframe[each] = dataframe[each].fillna(dataframe[each].mean())
 
 
 
