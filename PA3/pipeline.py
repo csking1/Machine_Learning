@@ -1,4 +1,4 @@
-#Machine Learning for Public Policy: HW1
+#Machine Learning for Public Policy: HW3
 #Charity King
 #PA3: Machine Learning Pipeline
 #May 3, 2016
@@ -7,15 +7,18 @@
 import pandas as pd
 import explore_clean as exp
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.cross_validation import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import *
+import time
 
 
 MODELS = ['KNN','RF','LR','GB','NB','DT']
 
-def params():
+def params:
 	clfs = {'RF': RandomForestClassifier(n_estimators=50, n_jobs=-1),
         'LR': LogisticRegression(penalty='l1', C=1e5),
         'SVM': svm.SVC(kernel='linear', probability=True, random_state=0),
@@ -37,14 +40,16 @@ def params():
 def go(training, testing):
     #########Initial phase: Reading, imputing data
 	test = exp.read_data(testing)
-    df = exp.read_data(training)
-	exp.data_summary(df)
-	exp.graph_data(df)
-	exp.impute_data(df, mean=False, median=True)
+    train = exp.read_data(training)
+	exp.data_summary(train)
+	exp.graph_data(train)
+	exp.impute_data(train, mean=False, median=True)
+    x, y = exp.feature_generation(train)
 
-def main_pipeline():
+def main_pipeline(dataframe, x, y):
 	for model in MODELS:
-		print ("Model:", model)
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size =0.2, random_state=0)
+
 
 
 if __name__ == '__main__':
