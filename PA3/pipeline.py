@@ -34,11 +34,13 @@ def params():
     'KNN' :{'n_neighbors': [1,5,10,25,50,100],'weights': ['uniform','distance'],'algorithm': ['auto','ball_tree','kd_tree']}
            }
 
-def go(training):
-	df = exp.read_data(training)
+def go(training, testing):
+    #########Initial phase: Reading, imputing data
+	test = exp.read_data(testing)
+    df = exp.read_data(training)
 	exp.data_summary(df)
-	# exp.graph_data(df)
-	exp.impute_data(df)
+	exp.graph_data(df)
+	exp.impute_data(df, mean=False, median=True)
 
 def main_pipeline():
 	for model in MODELS:
@@ -71,7 +73,7 @@ if __name__ == '__main__':
 	training = "cs-training.csv"
 	testing = "cs-test.csv"
 
-go(training)
+go(training, testing)
 main_pipeline()
 
  
