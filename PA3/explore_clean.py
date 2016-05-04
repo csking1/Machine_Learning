@@ -44,10 +44,6 @@ def impute_data(dataframe, mean=False, median=False):
             else:
                 dataframe[each] = dataframe[each].fillna(dataframe[each].median())
 
-def conditional_mean(dataframe):
-
-
-
 
 def binary_variable(dataframe, variable):
     data[column] = data[column].apply(lambda x: 0 if \
@@ -62,7 +58,8 @@ def binning_data(dataframe, variable, bins):
     return col
 
 
-def feature_generation():
-    for i in header != TARGET:
-
-    pass
+def feature_generation(dataframe):
+    y = dataframe[TARGET]
+    y = np.ravel(y)
+    x = dataframe.drop(TARGET,1)
+    return x, y

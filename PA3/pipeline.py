@@ -47,28 +47,6 @@ def main_pipeline():
 		print ("Model:", model)
 
 
-
-def clf_loop():
-	pass
-    # for n in range(1, 2):
-    #     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
-    #     for index,clf in enumerate([clfs[x] for x in models_to_run]):
-    #         print models_to_run[index]
-    #         parameter_values = grid[models_to_run[index]]
-    #         for p in ParameterGrid(parameter_values):
-    #             try:
-    #                 clf.set_params(**p)
-    #                 print clf
-    #                 y_pred_probs = clf.fit(X_train, y_train).predict_proba(X_test)[:,1]
-    #                 #threshold = np.sort(y_pred_probs)[::-1][int(.05*len(y_pred_probs))]
-    #                 #print threshold
-    #                 print precision_at_k(y_test,y_pred_probs,.05)
-    #                 #plot_precision_recall_n(y_test,y_pred_probs,clf)
-    #             except IndexError, e:
-    #                 print 'Error:',e
-    #                 continue
-
-
 if __name__ == '__main__':
 	training = "cs-training.csv"
 	testing = "cs-test.csv"
