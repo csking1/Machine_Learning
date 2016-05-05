@@ -20,13 +20,12 @@ def read_data(filename):
 
 def data_summary(dataframe):
     print("----------------Percentiles:-------------" "\n", np.round(dataframe.describe(percentiles = [.5]), 2).to_string(justify = "left"))
-    print("----------------Mean:--------------------" "\n",  dataframe.mean().to_string(float_format = "{:.2f}".format))
+    print("----------------Mean:--------------------" "\n", dataframe.mean().to_string(float_format = "{:.2f}".format))
     print("----------------Median:------------------" "\n", dataframe.median().to_string(float_format = "{:.2f}".format))
     print("----------------Standard Deviation:------" "\n", dataframe.std().to_string(float_format = "{:.2f}".format))
     print("----------------Mode:--------------------" '\n', dataframe.mode().to_string(index = False))
     print("----------------Correlation Matrix:------" "\n", dataframe.corr())
-    print("----------------Missing Values:----------" "\n",  dataframe.isnull().sum().to_string())
-
+    print("----------------Missing Values:----------" "\n", dataframe.isnull().sum().to_string())
 
 def graph_data(dataframe):
     dataframe.groupby(dataframe.columns[0]).size().plot(kind = "bar", width = 1, rot = 0)
@@ -36,10 +35,10 @@ def graph_data(dataframe):
         plt.show()
 
 def impute_data(dataframe, mean=False, median=False):
-	header = list(dataframe.columns)
-	for each in header:
-		if dataframe[each].isnull().values.any():
-            if mean=True:
+    header = list(dataframe.columns)
+    for each in header:
+        if dataframe[each].isnull().values.any():
+            if mean:
                 dataframe[each] = dataframe[each].fillna(dataframe[each].mean())
             else:
                 dataframe[each] = dataframe[each].fillna(dataframe[each].median())
