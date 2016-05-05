@@ -18,7 +18,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import *
 import time
 
-MODELS = ['KNN','RF', 'ET', 'AB', 'SVM', 'LR','GB','NB','DT']
+MODELS = ['LR','KNN','RF', 'ET', 'AB', 'SVM', 'LR','GB','NB','DT']
  
 
 clfs = {'RF': RandomForestClassifier(n_estimators=50, n_jobs=-1),
@@ -45,7 +45,6 @@ grid = {
     'KNN' :{'n_neighbors': [1,5,10,25,50,100],'weights': ['uniform','distance'],'algorithm': ['auto','ball_tree','kd_tree']}
            }
 
-
 def go(training, testing):
 	
     labels = exp.read_data(testing)
@@ -58,6 +57,13 @@ def go(training, testing):
 
 def main_pipeline(dataframe, x, y):
 
+    # Need to write out for each model:
+    #     -Model name
+    #     -Processing time
+    #     -Parameters
+    #     -Evaluation Metrics: Accuracy, Precision, Recall
+    #     -Plot AUC, ROC curves
+
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
     for index,clf in enumerate([clfs[x] for x in MODELS]):
         current_model = MODELS[index]
@@ -67,21 +73,20 @@ def main_pipeline(dataframe, x, y):
             try:
                 clf.set_params(**p)
                 y_pred_probs = clf.fit(x_train, y_train).predict_proba(x_test)[:,1]
-                print (precision_at_k(y_test,y_pred_probs,.05))            
+                print (precision_at_k(y_test,y_pred_probs,.05))
+
             except (IndexError, e):
                 print ('Error:',e)
                 continue
+
+# def accuracy (x, y):
+#     training = model.score(x, y)
+#     print ("Testing had a {} Accuracy Score". format(testing))
 
 def precision_at_k(y_true, y_scores, k):
     threshold = np.sort(y_scores)[::-1][int(k*len(y_scores))]
     y_pred = np.asarray([1 if i >= threshold else 0 for i in y_scores])
     return metrics.precision_score(y_true, y_pred)
-
-def evaluate_model():
-    pass
-def plot_model():
-    pass
-
 
 if __name__ == '__main__':
 	training = "cs-training.csv"
