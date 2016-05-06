@@ -3,6 +3,7 @@
 #PA3: Machine Learning Pipeline
 #May 3, 2016
 #csking1@uchicago.edu
+
 import csv
 import pandas as pd
 import explore_clean as exp
@@ -18,11 +19,9 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import *
 import time
 
-MODELS = ['LR','KNN']
+MODELS = ['LR','KNN', 'RF', 'NB', 'DT', 'ET', 'SVM']
 
 # MODELS = ['LR','KNN','RF', 'ET', 'AB', 'SVM', 'LR','GB','NB','DT']
-
-
 clfs = {'RF': RandomForestClassifier(n_estimators=50, n_jobs=-1),
         'ET': ExtraTreesClassifier(n_estimators=10, n_jobs=-1, criterion='entropy'),
         'AB': AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), algorithm="SAMME", n_estimators=200),
@@ -35,16 +34,15 @@ clfs = {'RF': RandomForestClassifier(n_estimators=50, n_jobs=-1),
             }
 
 grid = {
-    'RF':{'n_estimators': [1,10,100,1000,10000], 'max_depth': [1,5,10,20,50,100], 'max_features': ['sqrt','log2'],'min_samples_split': [2,5,10]},
+    'RF':{'n_estimators': [1,10,100], 'max_depth': [1,5,10], 'max_features': ['sqrt','log2'],'min_samples_split': [2,5,10]},
     'LR': { 'penalty': ['l1','l2'], 'C': [0.00001,0.0001,0.001,0.01,0.1,1,10]},
-    'SGD': { 'loss': ['hinge','log','perceptron'], 'penalty': ['l2','l1','elasticnet']},
-    'ET': { 'n_estimators': [1,10,100,1000,10000], 'criterion' : ['gini', 'entropy'] ,'max_depth': [1,5,10,20,50,100], 'max_features': ['sqrt','log2'],'min_samples_split': [2,5,10]},
-    'AB': { 'algorithm': ['SAMME', 'SAMME.R'], 'n_estimators': [1,10,100,1000,10000]},
-    'GB': {'n_estimators': [1,10,100,1000,10000], 'learning_rate' : [0.001,0.01,0.05,0.1,0.5],'subsample' : [0.1,0.5,1.0], 'max_depth': [1,3,5,10,20,50,100]},
+    'ET': { 'n_estimators': [1,10,100], 'criterion' : ['gini', 'entropy'] ,'max_depth': [1,5,10,20,50,100], 'max_features': ['sqrt','log2'],'min_samples_split': [2,5,10]},
+    'AB': { 'algorithm': ['SAMME', 'SAMME.R'], 'n_estimators': [1,10,100]},
+    'GB': {'n_estimators': [1,10,100], 'learning_rate' : [0.001,0.01,0.05,0.1,0.5],'subsample' : [0.1,0.5,1.0], 'max_depth': [1,3,5,10,20]},
     'NB' : {},
-    'DT': {'criterion': ['gini', 'entropy'], 'max_depth': [1,5,10,20,50,100], 'max_features': ['sqrt','log2'],'min_samples_split': [2,5,10]},
-    'SVM' :{'C' :[0.00001,0.0001,0.001,0.01,0.1,1,10],'kernel':['linear']},
-    'KNN' :{'n_neighbors': [1,5,10,25,50,100],'weights': ['uniform','distance'],'algorithm': ['auto','ball_tree','kd_tree']}
+    'DT': {'criterion': ['gini', 'entropy'], 'max_depth': [1,5,10], 'max_features': ['sqrt','log2'],'min_samples_split': [2,5,10]},
+    'SVM' :{'C' :[0.001,0.01,0.1,1,10],'kernel':['linear']},
+    'KNN' :{'n_neighbors': [1,5,10,25],'weights': ['uniform','distance'],'algorithm': ['auto','ball_tree','kd_tree']}
            }
 
 def magic_loop(dataframe, x, y):
@@ -57,6 +55,7 @@ def magic_loop(dataframe, x, y):
         best_model = ''
         top_AUC = 0
         best_parameters = ''
+        best_yhat = 0
 
         for index,clf in enumerate([clfs[x] for x in MODELS]):
             current_model = MODELS[index]
@@ -67,19 +66,23 @@ def magic_loop(dataframe, x, y):
                 try:
                     clf.set_params(**p)
                     y_pred_probs = clf.fit(x_train, y_train).predict_proba(x_test)[:,1]
-                    plot_precision_recall_n(y_test, y_pred_probs, clf)
                     precision, accuracy, recall, f1, threshold, AUC = model_evaluation(y_test, y_pred_probs,.05)
+                    print (precision, AUC)
                     w.writerow([current_model, p, precision, recall, AUC, f1, accuracy])
                     if AUC > top_AUC:
                         top_AUC = AUC
                         best_model = current_model
                         best_parameters = p
+                        best_y_hat = y_pred_probs
                 except (IndexError, e):
                     continue
         print ("this is the best_model", best_model)
+        plot_precision_recall_n(y_test, best_yhat, best_model)
+
 
 
 def model_evaluation(y_true, y_scores, k):
+    
 
     threshold = np.sort(y_scores)[::-1][int(k*len(y_scores))]
     y_pred = np.asarray([1 if i >= threshold else 0 for i in y_scores])
@@ -118,7 +121,6 @@ def plot_precision_recall_n(y_true, y_prob, model_name):
     ax2 = ax1.twinx()
     ax2.plot(pct_above_per_thresh, recall_curve, 'r')
     ax2.set_ylabel('recall', color='r')
-
     name = model_name
     plt.title(name)
     plt.show()

@@ -3,13 +3,11 @@ import sys
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestClassifier
 
 
    # Need to write out for each model:
-    #     -Model name
     #     -Processing time
-    #     -Parameters
-    #     -Evaluation Metrics: Accuracy, Precision, Recall
     #     -Plot AUC, ROC curves
 
 
@@ -31,27 +29,24 @@ def read_data(filename):
 def data_summary(dataframe):
     pass
 
-    # print("----------------Percentiles:-------------" "\n", np.round(dataframe.describe(percentiles = [.5]), 2).to_string(justify = "left"))
-    # print("----------------Mean:--------------------" "\n", dataframe.mean().to_string(float_format = "{:.2f}".format))
-    # print("----------------Median:------------------" "\n", dataframe.median().to_string(float_format = "{:.2f}".format))
-    # print("----------------Standard Deviation:------" "\n", dataframe.std().to_string(float_format = "{:.2f}".format))
-    # print("----------------Mode:--------------------" '\n', dataframe.mode().to_string(index = False))
-    # print("----------------Correlation Matrix:------" "\n", dataframe.corr())
-    # print("----------------Missing Values:----------" "\n", dataframe.isnull().sum().to_string())
+    print("----------------Percentiles:-------------" "\n", np.round(dataframe.describe(percentiles = [.5]), 2).to_string(justify = "left"))
+    print("----------------Mean:--------------------" "\n", dataframe.mean().to_string(float_format = "{:.2f}".format))
+    print("----------------Median:------------------" "\n", dataframe.median().to_string(float_format = "{:.2f}".format))
+    print("----------------Standard Deviation:------" "\n", dataframe.std().to_string(float_format = "{:.2f}".format))
+    print("----------------Mode:--------------------" '\n', dataframe.mode().to_string(index = False))
+    print("----------------Correlation Matrix:------" "\n", dataframe.corr())
+    print("----------------Missing Values:----------" "\n", dataframe.isnull().sum().to_string())
 
 def graph_data(dataframe):
-    # dataframe.groupby(dataframe.columns[0]).size().plot(kind = "bar", width = 1, rot = 0)
-    # plt.show()
-    # for name in dataframe.columns[1:]:
-    #     dataframe.groupby(name).size().plot()
-    #     plt.show()
+    dataframe.groupby(dataframe.columns[0]).size().plot(kind = "bar", width = 1, rot = 0)
+    plt.show()
+    for name in dataframe.columns[1:]:
+        dataframe.groupby(name).size().plot()
+        plt.show()
     ################Specialized graphs##################
     dataframe[dataframe.Debtratio < 3].Debtratio.hist(bins=2)
     plt.show()
    
-
-
-    
 def impute_data(dataframe, mean=False, median=False): 
     header = list(dataframe.columns)
     for each in header:
@@ -81,3 +76,17 @@ def feature_generation(dataframe):
     y = np.ravel(y)
     x = dataframe.drop(TARGET,1)
     return x, y
+
+def feature_importance(x, dataframe):
+
+    features = x
+    clf = RandomForestClassifier(compute_importances=True)
+    clf.fit(dataframe[features], dataframe[TARGET])
+    importances = clf.feature_importances_
+    sorted_idx = np.argsort(importances)
+    padding = np.arange(len(features)) + 0.5
+    pl.barh(padding, importances[sorted_idx], align='center')
+    pl.yticks(padding, features[sorted_idx])
+    pl.xlabel("Relative Importance")
+    pl.title("Variable Importance")
+    pl.show()
