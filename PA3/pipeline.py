@@ -88,18 +88,8 @@ def magic_loop(dataframe, x, y):
                         precision, accuracy, recall, f1, threshold, AUC = model_evaluation(y_test, y_pred_probs,.05)
                         end_time = t.time()
                         total_time = end_time - start_time
-                        print ("total time for model is", total_time)
                         w.writerow([current_model, p, precision, recall, AUC, f1, accuracy, total_time])
-                    # if AUC > best_AUC:
-                    #     best_model = current_model
-                    #     best_AUC = AUC
-                    #     best_param = p
-                    #     best_ypred = y_pred_probs
-                    #     best_precision = precision
-                    #     best_recall = recall
-                    #     best_f1 = f1
-                    #     best_accuracy = accuracy
-                    #     best_time = total_time
+               
                         if AUC > class_auc[current_model]:
                             class_auc[current_model] = AUC
                             cls_ypred = y_pred_probs
@@ -116,18 +106,7 @@ def magic_loop(dataframe, x, y):
                 auc = class_auc[current_model]
                 c.writerow([current_model, cls_param, cls_precision, cls_recall, auc, cls_f1, cls_accuracy, cls_time])
                 cls_d[current_model] = [auc, cls_ypred]
-
-                # Best_AUC(current_model, cls_param, cls_precision, cls_recall, auc, cls_f1, cls_accuracy, cls_time, cls_ypred, y_test)
                 plot_precision_recall_n(y_test, cls_ypred, current_model)
-        # Best_AUC(best_model, best_param, best_precision, best_recall, best_AUC, best_f1, best_accuracy, best_time, best_ypred, y_test)
-
-# def Best_AUC(best_model, best_param, best_precision, best_recall, best_AUC, best_f1, best_accuracy, best_time, best_ypred, y_test):
-
-#     with open('Eval/best_models.csv', 'w', newline='') as csvfile:
-#         w = csv.writer(csvfile, delimiter=',')
-#         w.writerow(['MODEL', 'PARAMETERS', 'PRECISION', 'RECALL', 'AUC', 'F1', 'ACCURACY', 'Time'])
-#         w.writerow([best_model, best_param, best_precision, best_recall, best_AUC, best_f1, best_accuracy, best_time])
-#         plot_precision_recall_n(y_test, best_ypred, best_model)
 
 def model_evaluation(y_true, y_scores, k):
     
@@ -170,7 +149,6 @@ def plot_precision_recall_n(y_true, y_scores, model_name):
     name = model_name
     plt.title(name)
     plt.savefig("Eval/{}.png".format(name))
-
     # plt.show()
 
 def go(training, testing):
@@ -178,7 +156,7 @@ def go(training, testing):
     labels = exp.read_data(testing)
     train = exp.read_data(training)
     exp.data_summary(train)
-    # exp.graph_data(train)
+    exp.graph_data(train)
     exp.impute_data(train, mean=False, median=True)
     x, y = exp.feature_generation(train)
     magic_loop(train, x, y)
