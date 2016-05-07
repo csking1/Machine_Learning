@@ -5,13 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 
-
-   # Need to write out for each model:
-    #     -Processing time
-    #     -Plot AUC, ROC curves
-
-
-OUTLIER = "Age"  #AGE COLUMN
 TARGET = "Dlqin2yrs"
 RENAME = ["Index", "Dlqin2yrs", "Unsecured", "Age", \
      "30to59days", "Debtratio", "Monthlyincome",  "Opencredit", \
